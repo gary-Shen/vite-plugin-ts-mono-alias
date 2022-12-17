@@ -1,4 +1,5 @@
 import { resolve } from 'path';
+import { existsSync, lstatSync } from 'fs';
 
 import type { Plugin } from 'vite';
 import { getPackages } from '@manypkg/get-packages';
@@ -6,6 +7,10 @@ import { getPackages } from '@manypkg/get-packages';
 interface TsMonoAliasOption {
   ignorePackages: string[];
   exact?: boolean;
+}
+
+function isDir(path: string) {
+  return existsSync(path) && lstatSync(path).isDirectory();
 }
 
 export default async function tsMonoAlias(
@@ -16,8 +21,17 @@ export default async function tsMonoAlias(
 ): Promise<Plugin> {
   const workspace = await getPackages(process.cwd());
   const currentPkg = require(resolve(process.cwd(), 'package.json'));
-  const packages = workspace.packages.filter((pkg) => !ignorePackages.includes(pkg.packageJson.name));
   const currentApp = workspace.packages.find((pkg) => pkg.packageJson.name === currentPkg.name);
+  const ignoredPackages = ignorePackages || [currentApp];
+  const packages = workspace.packages.filter((pkg) => {
+    return ignoredPackages.find((ipkg) => {
+      if (isDir(ipkg)) {
+        return pkg.dir === resolve(ipkg);
+      }
+
+      return pkg.packageJson.name === ipkg;
+    });
+  });
 
   return {
     name: 'test',
