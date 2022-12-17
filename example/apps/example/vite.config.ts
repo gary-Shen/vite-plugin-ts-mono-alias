@@ -11,7 +11,7 @@ export default defineConfig(() => {
     },
     plugins: [
       tsMonoAlias({
-        ignorePackages: ['example', 'vite-plugin-ts-mono-alias'],
+        ignorePackages: ['example'],
         exact: true,
       }),
     ],

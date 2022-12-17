@@ -22,9 +22,9 @@ export default async function tsMonoAlias(
   const workspace = await getPackages(process.cwd());
   const currentPkg = require(resolve(process.cwd(), 'package.json'));
   const currentApp = workspace.packages.find((pkg) => pkg.packageJson.name === currentPkg.name);
-  const ignoredPackages = ignorePackages || [currentApp];
+  const ignoredPackages = ignorePackages || [currentApp?.packageJson.name];
   const packages = workspace.packages.filter((pkg) => {
-    return ignoredPackages.find((ipkg) => {
+    return !ignoredPackages.find((ipkg) => {
       if (isDir(ipkg)) {
         return pkg.dir === resolve(ipkg);
       }
@@ -56,7 +56,7 @@ export default async function tsMonoAlias(
 
       // vendor packages imported by the mono-repo package
       if (resolveFromPackage && currentApp) {
-        newId = importee.replace(currentApp?.dir, resolveFromPackage.dir);
+        newId = importee.replace(currentApp.dir, resolveFromPackage.dir);
         return this.resolve(newId, importer, newResolveOptions).then((resolved) => {
           return resolved || { id: newId };
         });
