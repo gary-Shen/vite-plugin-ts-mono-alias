@@ -1,0 +1,11 @@
+{
+  "name": "ts-mono-alias",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "devDependencies": {
+    "lerna": "^6.1.0"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "name": "vite-plugin-ts-mono-alias",
+  "version": "1.0.0",
+  "description": "Vite plugin ts resolve for mono-repo projects.",
+  "main": "dist/index.cjs",
+  "module": "dist/index.esm.js",
+  "type": "module",
+  "scripts": {
+    "build": "rollup -c",
+    "release": "semantic-release"
+  },
+  "author": "garyshen <grinson50@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gary-Shen/vite-plugin-ts-mono-alias.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
+    "@babel/plugin-proposal-decorators": "^7.20.5",
+    "@babel/preset-env": "^7.20.2",
+    "@rollup/plugin-typescript": "^10.0.1",
+    "@semantic-release/commit-analyzer": "^9.0.2",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^8.0.7",
+    "@semantic-release/release-notes-generator": "^10.0.3",
+    "@shlab/fabric": "^1.1.2",
+    "@types/node": "^18.11.15",
+    "rollup": "^3.7.4",
+    "semantic-release": "^19.0.5",
+    "tslib": "^2.4.1",
+    "typescript": "^4.9.4",
+    "vite": "^4.0.1"
+  },
+  "dependencies": {
+    "@manypkg/get-packages": "^1.1.3"
+  }
+}
