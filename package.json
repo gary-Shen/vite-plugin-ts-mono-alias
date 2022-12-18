@@ -1,8 +1,13 @@
 {
   "name": "vite-plugin-ts-mono-alias",
-  "version": "1.0.0-alpha.8",
+  "version": "1.0.1",
   "description": "Vite plugin ts resolve for mono-repo projects.",
   "main": "dist/index.cjs",
+  "keywords": [
+    "ts mono-repo alias",
+    "ts mono-repo resolve",
+    "vite plugin ts mono-repo alias src"
+  ],
   "module": "dist/index.esm.js",
   "type": "module",
   "scripts": {
