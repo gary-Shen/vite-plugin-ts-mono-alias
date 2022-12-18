@@ -76,6 +76,10 @@ Exact match the importee. Such as
 
 `import a from '@example/package-a/lib/foo';` - Will not work.
 
+## TODO
+
+- test
+
 #### License
 
 MIT
