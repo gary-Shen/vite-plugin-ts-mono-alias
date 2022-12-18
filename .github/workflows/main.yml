@@ -10,9 +10,9 @@ env:
 on:
   # Triggers the workflow on push or pull request events but only for the "master" branch
   push:
-    branches: ["master", "beta", "alpha"]
+    branches: ["main", "beta", "alpha"]
   pull_request:
-    branches: ["master", "beta", "alpha"]
+    branches: ["main", "beta", "alpha"]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
