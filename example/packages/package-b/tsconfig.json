@@ -6,7 +6,10 @@
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "outDir": "dist",
-    "baseUrl": "./"
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "include": [
     "./src"

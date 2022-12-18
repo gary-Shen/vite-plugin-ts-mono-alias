@@ -1,8 +1,8 @@
 # `vite-plugin-ts-mono-alias`
 
-> `import packageA from '@example/package-a';` will resolve from `/path-to-your-mono-repo-project/packages/package-a/src/index.ts`
-
 A vite plugin to resolve mono-repo packages from 'src' directory, therefor no need to build packages for easy debugging. :)
+
+![screenshot](./screenshots/screenshot.png)
 
 ## Usage
 
