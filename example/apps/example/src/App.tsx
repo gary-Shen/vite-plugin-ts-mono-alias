@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react';
 import { a } from '@ts-mono-alias/package-a';
 import { b } from '@ts-mono-alias/package-b';
 
+import Demo from '@/components/Demo'
+
 function App() {
   const [count, setCount] = useState(0);
 
@@ -16,7 +18,7 @@ function App() {
         <p>a: {resultA}</p>
         <p>b: {resultB}</p>
       </div>
-      <p className="read-the-docs">Click on the Vite and React logos to learn more</p>
+      <Demo />
     </div>
   );
 }

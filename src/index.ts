@@ -1,6 +1,5 @@
-import { join, resolve } from 'path';
+import { isAbsolute, join, resolve } from 'path';
 import { existsSync, lstatSync } from 'fs';
-// import { platform } from 'os'
 
 import { parseConfigFileTextToJson, findConfigFile, sys } from 'typescript';
 import type { Plugin } from 'vite';
@@ -42,10 +41,10 @@ function getTsConfigMapping(packages: Package[]) {
 
   packages.forEach((pkg) => {
     const tsConfig = getTsConfig(findConfigFile(pkg.dir, sys.fileExists));
-    console.log('ttttt', join(pkg.dir, tsConfig.compilerOptions.baseUrl))
+
     result[pkg.packageJson.name] = {
       config: tsConfig,
-      match: createMatchPath(join(pkg.dir, tsConfig.compilerOptions.baseUrl), tsConfig.compilerOptions.paths),
+      match: createMatchPath(join(pkg.dir, tsConfig.compilerOptions.baseUrl), tsConfig.compilerOptions.paths || {}),
     };
   });
 
@@ -75,7 +74,6 @@ export default async function tsMonoAlias(
     dir: resolve(pkg.dir),
   }));
   const tsConfigMapping = getTsConfigMapping(packages);
-  // const currentPlatform = platform
 
   function matchModule(importee: string, importer: string): string | null {
     const matchedPackage = packages.find((pkg) => {
@@ -101,7 +99,7 @@ export default async function tsMonoAlias(
     const matchPath = tsConfigMapping[importedFromPackage.packageJson.name].match;
     const pathsInTsConfig = compilerOptions.paths;
 
-    if (pathsInTsConfig) {
+    if (pathsInTsConfig && !isAbsolute(importee)) {
       const result = matchPath(importee, undefined, undefined, ['.js', '.json', '.mjs', '.ts', '.tsx', '.jsx']);
 
       if (!result) {
@@ -109,6 +107,11 @@ export default async function tsMonoAlias(
       }
 
       return result;
+    }
+
+    // working with built-in alias plugin
+    if (isAbsolute(importee) && currentApp) {
+      return importee.replace(currentApp.dir, importedFromPackage.dir)
     }
 
     return null;
