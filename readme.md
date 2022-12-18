@@ -17,8 +17,6 @@ yarn add vite-plugin-ts-mono-alias -D
 
 ```ts
 // vite.config.ts
-import { resolve } from 'path';
-
 import tsMonoAlias from 'vite-plugin-ts-mono-alias';
 import { defineConfig } from 'vite';
 
@@ -44,8 +42,6 @@ example:
 
 ```ts
 // vite.config.ts
-import { resolve } from 'path';
-
 import tsMonoAlias from 'vite-plugin-ts-mono-alias';
 import { defineConfig } from 'vite';
 
@@ -70,7 +66,7 @@ export default defineConfig(() => {
 
 > default false.
 
-Exact match the importee. Such as
+Exactly match the importee. Such as
 
 `import a from '@example/package-a';` - Will work.
 
