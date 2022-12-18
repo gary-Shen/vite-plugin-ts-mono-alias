@@ -15,9 +15,9 @@ export default defineConfig(() => {
         exact: true,
       }),
     ],
-    resolve: {
-      alias: [{ find: '@', replacement: resolve(__dirname, 'src') }],
-    },
+    // resolve: {
+    //   alias: [{ find: '@', replacement: resolve(__dirname, 'src') }],
+    // },
 
     build: {
       assetsDir: '',
