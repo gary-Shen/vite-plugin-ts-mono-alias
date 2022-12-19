@@ -3,19 +3,18 @@ import { existsSync, lstatSync } from 'fs';
 
 import { parseConfigFileTextToJson, findConfigFile, sys } from 'typescript';
 import type { Plugin } from 'vite';
-import { getPackages, Package } from '@manypkg/get-packages';
 import { createMatchPath } from 'tsconfig-paths';
+import type { MatchPath } from 'tsconfig-paths';
+import type { Package } from '@manypkg/get-packages';
+import { getPackages } from '@manypkg/get-packages';
 
-interface TsMonoAliasOption {
-  ignorePackages: string[];
-  exact?: boolean;
-}
+import type { TsConfig, TsMonoAliasOption } from './types';
 
 function isDir(path: string) {
   return existsSync(path) && lstatSync(path).isDirectory();
 }
 
-function getTsConfig(configPath?: string) {
+function getTsConfig(configPath?: string): TsConfig {
   const defaults = { compilerOptions: {}, outDir: '.' };
 
   if (!configPath) {
@@ -37,42 +36,52 @@ function getTsConfig(configPath?: string) {
 }
 
 function getTsConfigMapping(packages: Package[]) {
-  const result: Record<string, any> = {};
+  const result: Record<
+    string,
+    {
+      config: TsConfig;
+      match: MatchPath;
+    }
+  > = {};
 
   packages.forEach((pkg) => {
     const tsConfig = getTsConfig(findConfigFile(pkg.dir, sys.fileExists));
 
     result[pkg.packageJson.name] = {
       config: tsConfig,
-      match: createMatchPath(join(pkg.dir, tsConfig.compilerOptions.baseUrl), tsConfig.compilerOptions.paths || {}),
+      match: createMatchPath(
+        join(pkg.dir, tsConfig.compilerOptions.baseUrl || '.'),
+        tsConfig.compilerOptions.paths || {},
+      ),
     };
   });
 
   return result;
 }
 
-export default async function tsMonoAlias(
-  { ignorePackages = [], exact = false }: TsMonoAliasOption = {
-    ignorePackages: [],
-    exact: false,
-  },
-): Promise<Plugin> {
+export default async function tsMonoAlias({
+  ignorePackages = [],
+  exact = false,
+  alias = {},
+}: TsMonoAliasOption): Promise<Plugin> {
   const workspace = await getPackages(process.cwd());
   const currentPkg = require(resolve(process.cwd(), 'package.json'));
   const currentApp = workspace.packages.find((pkg) => pkg.packageJson.name === currentPkg.name);
   const ignoredPackages = ignorePackages || [currentApp?.packageJson.name];
-  const packages = workspace.packages.filter((pkg) => {
-    return !ignoredPackages.find((ipkg) => {
-      if (isDir(ipkg)) {
-        return resolve(pkg.dir) === resolve(ipkg);
-      }
+  const packages = workspace.packages
+    .filter((pkg) => {
+      return !ignoredPackages.find((ipkg) => {
+        if (isDir(ipkg)) {
+          return resolve(pkg.dir) === resolve(ipkg);
+        }
 
-      return pkg.packageJson.name === ipkg;
-    });
-  }).map(pkg => ({
-    ...pkg,
-    dir: resolve(pkg.dir),
-  }));
+        return pkg.packageJson.name === ipkg;
+      });
+    })
+    .map((pkg) => ({
+      ...pkg,
+      dir: resolve(pkg.dir),
+    }));
   const tsConfigMapping = getTsConfigMapping(packages);
 
   function matchModule(importee: string, importer: string): string | null {
@@ -85,6 +94,24 @@ export default async function tsMonoAlias(
     });
 
     if (matchedPackage) {
+      const matchedAlias = alias[matchedPackage.packageJson.name];
+
+      if (!matchedAlias) {
+        return join(matchedPackage.dir, 'src');
+      }
+
+      if (typeof matchedAlias === 'function') {
+        return matchedAlias(matchedPackage);
+      }
+
+      if (isAbsolute(matchedAlias)) {
+        return matchedAlias;
+      }
+
+      if (matchedAlias.startsWith('.')) {
+        return join(process.cwd(), matchedAlias);
+      }
+
       return join(matchedPackage.dir, 'src');
     }
 
@@ -109,9 +136,9 @@ export default async function tsMonoAlias(
       return result;
     }
 
-    // working with built-in alias plugin
+    // Working with built-in alias plugin
     if (isAbsolute(importee) && currentApp) {
-      return importee.replace(currentApp.dir, importedFromPackage.dir)
+      return importee.replace(currentApp.dir, importedFromPackage.dir);
     }
 
     return null;
@@ -125,7 +152,6 @@ export default async function tsMonoAlias(
         return null;
       }
 
-      // const correctImportee = currentPlatform === 'win32' ? importee.replace(/\//g, '\\') : importee;
       const resolvedImporter = resolve(importer);
       const newResolveOptions = Object.assign({ skipSelf: true }, resolveOptions);
 

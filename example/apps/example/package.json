@@ -10,6 +10,7 @@
   "dependencies": {
     "@ts-mono-alias/package-a": "^1.0.0",
     "@ts-mono-alias/package-b": "^1.0.0",
+    "@ts-mono-alias/package-c": "^1.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

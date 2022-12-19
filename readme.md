@@ -13,7 +13,7 @@ npm install vite-plugin-ts-mono-alias -D
 yarn add vite-plugin-ts-mono-alias -D
 ```
 
-### configuration
+### Configuration
 
 ```ts
 // vite.config.ts
@@ -31,6 +31,35 @@ export default defineConfig(() => {
 ```
 
 ### Options
+
+#### `alias`
+
+Define alias for packages.
+
+example:
+
+```ts
+// vite.config.ts
+import tsMonoAlias from 'vite-plugin-ts-mono-alias';
+import { defineConfig } from 'vite';
+import { join } from 'path';
+
+// https://vitejs.dev/config/
+export default defineConfig(() => {
+  return {
+    // ...
+    plugins: [
+      tsMonoAlias({
+        alias: {
+          '@example/package-a': '../../../package-a/lib',
+          '@example/package-b': ({ dir }) => join(dir, 'index.ts'),
+        },
+      }),
+    ],
+    // ...
+  };
+});
+```
 
 #### `ignorePackages`
 
@@ -53,7 +82,7 @@ export default defineConfig(() => {
       tsMonoAlias({
         ignorePackages: [
           'package-a', // by package name
-          '../package-a', // by path
+          '../package-b', // by path
         ],
       }),
     ],
