@@ -1,0 +1,16 @@
+{
+  "name": "@ts-mono-alias/package-c",
+  "version": "1.0.0",
+  "main": "dist/index.mjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "vite build && npm run build:types",
+    "build:types": "tsc -d --emitDeclarationOnly"
+  },
+  "devDependencies": {
+    "typescript": "^4.9.4",
+    "vite": "^4.0.1",
+    "vite-tsconfig-paths": "^4.0.3"
+  }
+}

@@ -1,4 +1,4 @@
-import { resolve } from 'path';
+import { join, resolve } from 'path';
 
 import tsMonoAlias from 'vite-plugin-ts-mono-alias';
 import { defineConfig } from 'vite';
@@ -13,6 +13,9 @@ export default defineConfig(() => {
       tsMonoAlias({
         ignorePackages: ['example'],
         exact: true,
+        alias: {
+          '@ts-mono-alias/package-c': ({ dir }) => join(dir, './index.ts'),
+        },
       }),
     ],
     resolve: {
