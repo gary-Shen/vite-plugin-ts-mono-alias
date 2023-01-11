@@ -1,6 +1,6 @@
 # `vite-plugin-ts-mono-alias`
 
-A vite plugin to resolve mono-repo packages from 'src' directory, therefor no need to build packages for easy debugging. :)
+A vite plugin to resolve mono-repo packages from another directory ("src" etc.), therefor no need to build packages for easy debugging. :)
 
 ![screenshot](./screenshots/screenshot.png)
 
