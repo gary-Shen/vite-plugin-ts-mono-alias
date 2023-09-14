@@ -59,11 +59,8 @@ function getTsConfigMapping(packages: Package[]) {
   return result;
 }
 
-export default async function tsMonoAlias({
-  ignorePackages = [],
-  exact = false,
-  alias = {},
-}: TsMonoAliasOption): Promise<Plugin> {
+export default async function tsMonoAlias(options: TsMonoAliasOption ): Promise<Plugin> {
+  const { alias = {}, ignorePackages = [] } = options;
   const workspace = await getPackages(process.cwd());
   const currentPkg = require(resolve(process.cwd(), 'package.json'));
   const currentApp = workspace.packages.find((pkg) => pkg.packageJson.name === currentPkg.name);
@@ -86,11 +83,7 @@ export default async function tsMonoAlias({
 
   function matchModule(importee: string, importer: string): string | null {
     const matchedPackage = packages.find((pkg) => {
-      if (exact) {
-        return pkg.packageJson.name === importee;
-      }
-
-      return importee.startsWith(pkg.packageJson.name);
+      return pkg.packageJson.name === importee;
     });
 
     if (matchedPackage) {
