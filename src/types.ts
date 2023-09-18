@@ -8,9 +8,7 @@ export interface TsConfig {
 
 export interface TsMonoAliasOption {
   /** @default [process.cwd()] */
-  ignorePackages: string[];
-  /** @default false */
-  exact?: boolean;
+  ignorePackages?: string[];
   /** @default to <package dir>/src */
   alias?: Record<string, string | ((pkg: Package) => string)>;
 }

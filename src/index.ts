@@ -59,12 +59,22 @@ function getTsConfigMapping(packages: Package[]) {
   return result;
 }
 
-export default async function tsMonoAlias(options: TsMonoAliasOption ): Promise<Plugin> {
-  const { alias = {}, ignorePackages = [] } = options;
+const defaultOptions = {
+  alias: {},
+  ignorePackages: undefined,
+};
+
+export default async function tsMonoAlias(options: TsMonoAliasOption = defaultOptions): Promise<Plugin> {
+  const { alias = {}, ignorePackages } = options;
   const workspace = await getPackages(process.cwd());
   const currentPkg = require(resolve(process.cwd(), 'package.json'));
   const currentApp = workspace.packages.find((pkg) => pkg.packageJson.name === currentPkg.name);
-  const ignoredPackages = ignorePackages || [currentApp?.packageJson.name];
+
+  if (!currentApp?.packageJson.name) {
+    throw new Error('Your current package.json does not have a name.');
+  }
+
+  const ignoredPackages = ignorePackages || [currentApp.packageJson.name];
   const packages = workspace.packages
     .filter((pkg) => {
       return !ignoredPackages.find((ipkg) => {
