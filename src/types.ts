@@ -14,6 +14,6 @@ export interface TsMonoAliasOption {
   alias?: Record<string, string | ((pkg: Package) => string)>;
 }
 
-export type tsMonoAlias = (options?: TsMonoAliasOption) => Promise<Plugin>;
+export type TsMonoAlias = (options?: TsMonoAliasOption) => Promise<Plugin>;
 
-export default tsMonoAlias;
+export default TsMonoAlias;
