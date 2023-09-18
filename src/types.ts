@@ -15,3 +15,5 @@ export interface TsMonoAliasOption {
 }
 
 export type tsMonoAlias = (options?: TsMonoAliasOption) => Promise<Plugin>;
+
+export default tsMonoAlias;
