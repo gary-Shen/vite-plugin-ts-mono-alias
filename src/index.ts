@@ -1,14 +1,18 @@
 import { isAbsolute, join, resolve } from 'path';
 import { existsSync, lstatSync } from 'fs';
+import type { CompilerOptions } from 'typescript';
+import type { Package } from '@manypkg/get-packages';
 
 import { parseConfigFileTextToJson, findConfigFile, sys } from 'typescript';
 import type { Plugin } from 'vite';
 import { createMatchPath } from 'tsconfig-paths';
 import type { MatchPath } from 'tsconfig-paths';
-import type { Package } from '@manypkg/get-packages';
 import { getPackages } from '@manypkg/get-packages';
 
-import type { TsConfig, TsMonoAliasOption } from './types';
+export interface TsConfig {
+  compilerOptions: CompilerOptions;
+  outDir: string;
+}
 
 function isDir(path: string) {
   return existsSync(path) && lstatSync(path).isDirectory();
@@ -63,6 +67,13 @@ const defaultOptions = {
   alias: {},
   ignorePackages: undefined,
 };
+
+export interface TsMonoAliasOption {
+  /** @default [process.cwd()] */
+  ignorePackages?: string[];
+  /** @default to <package dir>/src */
+  alias?: Record<string, string | ((pkg: Package) => string)>;
+}
 
 export default async function tsMonoAlias(options: TsMonoAliasOption = defaultOptions): Promise<Plugin> {
   const { alias = {}, ignorePackages } = options;
