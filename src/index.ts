@@ -1,4 +1,4 @@
-import { isAbsolute, join, resolve } from 'path';
+import { isAbsolute, join, resolve, sep } from 'path';
 import { existsSync, lstatSync } from 'fs';
 import type { CompilerOptions } from 'typescript';
 import type { Package } from '@manypkg/get-packages';
@@ -58,6 +58,36 @@ function getTsConfigMapping(packages: Package[]) {
         tsConfig.compilerOptions.paths || {},
       ),
     };
+  });
+
+  return result;
+}
+
+function getMatchedIndex(sourcePath: string, targetPath: string) {
+  const sourcePathArray = sourcePath.split(sep);
+  const targetPathArray = targetPath.split(sep);
+  let matchedIndex = -1;
+
+  for (let i = 0; i < Math.min(sourcePathArray.length, targetPathArray.length); i++) {
+    if (sourcePathArray[i] === targetPathArray[i]) {
+      matchedIndex = Math.max(i, matchedIndex);
+    }
+  }
+
+  return matchedIndex;
+}
+
+function getExactMatchedPackage(packages: Package[], importer: string): Package | null {
+  let matchedIndex = -1;
+  let result = null;
+
+  packages.forEach((pkg) => {
+    const matchedIndexForPackage = getMatchedIndex(importer, pkg.dir);
+
+    if (matchedIndexForPackage > matchedIndex && importer.includes(pkg.dir)) {
+      matchedIndex = matchedIndexForPackage;
+      result = pkg;
+    }
   });
 
   return result;
@@ -130,7 +160,7 @@ export default async function tsMonoAlias(options: TsMonoAliasOption = defaultOp
     }
 
     const resolvedImporter = resolve(importer);
-    const importedFromPackage = packages.find((pkg) => resolvedImporter.includes(pkg.dir));
+    const importedFromPackage = getExactMatchedPackage(packages, resolvedImporter);
 
     if (!importedFromPackage) {
       return null;
