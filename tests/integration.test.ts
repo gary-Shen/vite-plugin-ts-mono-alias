@@ -1,8 +1,9 @@
-import { describe, it, expect } from 'vitest';
 import { exec } from 'child_process';
+import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { promisify } from 'util';
-import { existsSync, readFileSync } from 'fs';
+
+import { describe, it, expect } from 'vitest';
 
 const execAsync = promisify(exec);
 
