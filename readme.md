@@ -99,7 +99,7 @@ export default defineConfig(() => {
 
 > default false.
 
-Exactly match the importee. Such as
+Exactly match the importee. Such as:
 
 `import a from '@example/package-a';` - Will work.
 
