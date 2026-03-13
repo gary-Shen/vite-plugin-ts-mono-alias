@@ -1,12 +1,16 @@
 # `vite-plugin-ts-mono-alias`
 
-A vite plugin to resolve mono-repo packages from 'src' directory, therefor no need to build packages for easy debugging. :)
+A Vite plugin to seamlessly resolve mono-repo packages from their `src` directory, eliminating the need to build dependencies manually for easy debugging. :)
+
+✨ **Now fully tested and officially supporting Vite 4, Vite 7, and Vite 8 (including CJS/ESM phantom `.default` fixes).**
 
 ![screenshot](./screenshots/screenshot.png)
 
 ## Usage
 
 ```bash
+# pnpm (recommended for workspaces)
+pnpm add vite-plugin-ts-mono-alias -D
 # npm
 npm install vite-plugin-ts-mono-alias -D
 # yarn
@@ -101,10 +105,6 @@ Exactly match the importee. Such as
 
 `import a from '@example/package-a/lib/foo';` - Will not work.
 
-## TODO
-
-- test
-
-#### License
+## License
 
 MIT

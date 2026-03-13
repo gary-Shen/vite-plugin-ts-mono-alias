@@ -1,13 +1,13 @@
-import { isAbsolute, join, resolve, sep } from 'path';
 import { existsSync, lstatSync } from 'fs';
-import type { CompilerOptions } from 'typescript';
-import type { Package } from '@manypkg/get-packages';
+import { isAbsolute, join, resolve, sep } from 'path';
 
-import { parseConfigFileTextToJson, findConfigFile, sys } from 'typescript';
-import type { Plugin } from 'vite';
+import type { Package } from '@manypkg/get-packages';
+import { getPackages } from '@manypkg/get-packages';
 import { createMatchPath } from 'tsconfig-paths';
 import type { MatchPath } from 'tsconfig-paths';
-import { getPackages } from '@manypkg/get-packages';
+import type { CompilerOptions } from 'typescript';
+import { parseConfigFileTextToJson, findConfigFile, sys } from 'typescript';
+import type { Plugin } from 'vite';
 
 export interface TsConfig {
   compilerOptions: CompilerOptions;
@@ -103,12 +103,15 @@ export interface TsMonoAliasOption {
   ignorePackages?: string[];
   /** @default to <package dir>/src */
   alias?: Record<string, string | ((pkg: Package) => string)>;
+  /** @default process.cwd() */
+  cwd?: string;
 }
 
 export default async function tsMonoAlias(options: TsMonoAliasOption = defaultOptions): Promise<Plugin> {
-  const { alias = {}, ignorePackages } = options;
-  const workspace = await getPackages(process.cwd());
-  const currentPkg = require(resolve(process.cwd(), 'package.json'));
+  const { alias = {}, ignorePackages, cwd = process.cwd() } = options;
+  const workspace = await getPackages(cwd);
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const currentPkg = require(resolve(cwd, 'package.json'));
   const currentApp = workspace.packages.find((pkg) => pkg.packageJson.name === currentPkg.name);
 
   if (!currentApp?.packageJson.name) {
@@ -153,7 +156,7 @@ export default async function tsMonoAlias(options: TsMonoAliasOption = defaultOp
       }
 
       if (matchedAlias.startsWith('.')) {
-        return join(process.cwd(), matchedAlias);
+        return join(cwd, matchedAlias);
       }
 
       return join(matchedPackage.dir, 'src');
@@ -200,6 +203,7 @@ export default async function tsMonoAlias(options: TsMonoAliasOption = defaultOp
       const newResolveOptions = Object.assign({ skipSelf: true }, resolveOptions);
 
       if (!currentApp) {
+        // eslint-disable-next-line no-console
         console.log(
           'ts-mono-alias works only in mono-repo projects. You may include the current working directory (CWD) to your workspace setting.',
         );
@@ -210,9 +214,13 @@ export default async function tsMonoAlias(options: TsMonoAliasOption = defaultOp
       const matchedPackage = matchModule(importee, importer);
 
       if (matchedPackage) {
-        return this.resolve(matchedPackage, resolvedImporter, newResolveOptions).then((resolved) => {
-          return resolved || { id: matchedPackage };
-        });
+        return this.resolve(matchedPackage, resolvedImporter, newResolveOptions)
+          .then((resolved) => {
+            return resolved || { id: matchedPackage };
+          })
+          .catch(() => {
+            return { id: matchedPackage };
+          });
       }
 
       return null;
