@@ -212,9 +212,13 @@ export default async function tsMonoAlias(options: TsMonoAliasOption = defaultOp
       const matchedPackage = matchModule(importee, importer);
 
       if (matchedPackage) {
-        return this.resolve(matchedPackage, resolvedImporter, newResolveOptions).then((resolved) => {
-          return resolved || { id: matchedPackage };
-        });
+        return this.resolve(matchedPackage, resolvedImporter, newResolveOptions)
+          .then((resolved) => {
+            return resolved || { id: matchedPackage };
+          })
+          .catch(() => {
+            return { id: matchedPackage };
+          });
       }
 
       return null;

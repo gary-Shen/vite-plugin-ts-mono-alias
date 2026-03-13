@@ -10,8 +10,14 @@ describe('ts-mono-alias plugin', () => {
   const libAFile = join(rootDir, 'packages/package-a/src/index.ts');
 
   // Helper context to mock Rollup Context
-  const getContext = () => ({
-    resolve: async (id: string) => ({ id })
+  // Simulate Vite 7/8 throwing an error for external ids without trailing specs
+  const getContext = (simulateError = false) => ({
+    resolve: async (id: string) => {
+      if (simulateError) {
+        throw new Error(`Rollup Error: Could not resolve entry module "${id}"`);
+      }
+      return { id };
+    }
   });
 
   it('resolves bare import for workspace package to its src directory', async () => {
@@ -19,6 +25,17 @@ describe('ts-mono-alias plugin', () => {
     
     // @ts-ignore
     const result = await plugin.resolveId.call(getContext(), '@ts-mono-alias/package-a', appFile, {});
+    
+    expect(result).toBeDefined();
+    expect(result).toBeDefined();
+    expect(result?.id).toBe(join(rootDir, 'packages/package-a/src'));
+  });
+
+  it('safely falls back if `this.resolve` throws an error (Vite 7/8 compatibility)', async () => {
+    const plugin = await tsMonoAlias({ cwd });
+    
+    // @ts-ignore
+    const result = await plugin.resolveId.call(getContext(true), '@ts-mono-alias/package-a', appFile, {});
     
     expect(result).toBeDefined();
     expect(result?.id).toBe(join(rootDir, 'packages/package-a/src'));

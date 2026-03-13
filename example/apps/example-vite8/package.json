@@ -1,5 +1,5 @@
 {
-  "name": "example",
+  "name": "example-vite8",
   "version": "1.0.0",
   "private": true,
   "description": "Example",
@@ -18,8 +18,8 @@
     "@types/node": "^18.11.15",
     "@types/react": "^18.0.26",
     "@types/react-dom": "^18.0.9",
-    "@vitejs/plugin-react": "^3.0.0",
+    "@vitejs/plugin-react": "^4.0.0",
     "vite-plugin-ts-mono-alias": "file:../../..",
-    "vite": "^4.0.1"
+    "vite": "^8.0.0"
   }
 }
