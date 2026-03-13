@@ -103,12 +103,14 @@ export interface TsMonoAliasOption {
   ignorePackages?: string[];
   /** @default to <package dir>/src */
   alias?: Record<string, string | ((pkg: Package) => string)>;
+  /** @default process.cwd() */
+  cwd?: string;
 }
 
 export default async function tsMonoAlias(options: TsMonoAliasOption = defaultOptions): Promise<Plugin> {
-  const { alias = {}, ignorePackages } = options;
-  const workspace = await getPackages(process.cwd());
-  const currentPkg = require(resolve(process.cwd(), 'package.json'));
+  const { alias = {}, ignorePackages, cwd = process.cwd() } = options;
+  const workspace = await getPackages(cwd);
+  const currentPkg = require(resolve(cwd, 'package.json'));
   const currentApp = workspace.packages.find((pkg) => pkg.packageJson.name === currentPkg.name);
 
   if (!currentApp?.packageJson.name) {
@@ -153,7 +155,7 @@ export default async function tsMonoAlias(options: TsMonoAliasOption = defaultOp
       }
 
       if (matchedAlias.startsWith('.')) {
-        return join(process.cwd(), matchedAlias);
+        return join(cwd, matchedAlias);
       }
 
       return join(matchedPackage.dir, 'src');

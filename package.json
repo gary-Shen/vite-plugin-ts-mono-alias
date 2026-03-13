@@ -14,7 +14,8 @@
   "scripts": {
     "build": "rollup -c && npm run build:types",
     "build:types": "tsc -d --emitDeclarationOnly",
-    "release": "semantic-release"
+    "release": "semantic-release",
+    "test": "vitest run"
   },
   "author": "garyshen <grinson50@gmail.com>",
   "repository": {
@@ -39,11 +40,13 @@
     "@semantic-release/release-notes-generator": "^10.0.3",
     "@shlab/fabric": "^1.1.2",
     "@types/node": "^18.11.15",
+    "@vitest/coverage-v8": "^0.34.6",
     "rollup": "^3.7.4",
     "semantic-release": "^19.0.5",
     "tslib": "^2.4.1",
     "typescript": "^5.2.2",
-    "vite": "^4.0.1"
+    "vite": "^4.0.1",
+    "vitest": "^0.34.6"
   },
   "dependencies": {
     "@manypkg/get-packages": "^1.1.3",
